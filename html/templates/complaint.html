@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grievance | Citizen Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        :root {
+            --primary: #155eef;
+            --dark: #102a43;
+            --muted: #62748a;
+            --border: #dce5f0;
+            --background: #f4f7fc;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            background: var(--primary);
+            color: white;
+            height: 45px;
+            width: 45px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 23px;
+        }
+
+        .brand h2 {
+            font-size: 20px;
+        }
+
+        .brand p {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .portal-label {
+            color: var(--primary);
+            background: #edf3ff;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #123b83, #1765e8);
+            color: white;
+            padding: 45px 7%;
+        }
+
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            max-width: 650px;
+            line-height: 1.7;
+            color: #e4edff;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            border: 1px solid #8bb4ff;
+            border-radius: 20px;
+            padding: 6px 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+        main {
+            width: min(1100px, 90%);
+            margin: 32px auto 50px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        .info-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        .info-card .emoji {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .info-card p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(16, 42, 67, 0.05);
+        }
+
+        .form-heading {
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-heading h2 {
+            font-size: 22px;
+            margin-bottom: 7px;
+        }
+
+        .form-heading p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        form {
+            padding: 28px 30px 32px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-number {
+            background: #eaf1ff;
+            color: var(--primary);
+            height: 30px;
+            width: 30px;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334e68;
+        }
+
+        .required {
+            color: #e04444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #cbd7e5;
+            border-radius: 9px;
+            padding: 12px 13px;
+            background: #fff;
+            color: var(--dark);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 94, 239, 0.1);
+        }
+
+        textarea {
+            min-height: 125px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .notice {
+            background: #f0f6ff;
+            border: 1px solid #d5e5ff;
+            border-radius: 10px;
+            padding: 14px 16px;
+            color: #31578c;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            padding: 13px 16px;
+            background: #eff6ff;
+            color: #174ea6;
+            border: 1px solid #c7ddff;
+            border-radius: 9px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .submit-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .privacy {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            max-width: 330px;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 23px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #104bc4;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 6%;
+            background: white;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                padding: 15px 5%;
+            }
+
+            .hero {
+                padding: 35px 5%;
+            }
+
+            main {
+                width: 92%;
+                margin-top: 22px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .fields {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .form-heading {
+                padding: 22px 20px;
+            }
+
+            form {
+                padding: 22px 20px;
+            }
+
+            .submit-row {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <div class="brand-icon">🏛</div>
+        <div>
+            <h2>Smart Grievance</h2>
+            <p>Citizen Complaint Management System</p>
+        </div>
+    </div>
+
+    <div class="portal-label">Citizen Portal</div>
+</header>
+
+<section class="hero">
+    <div class="hero-tag">YOUR VOICE MATTERS</div>
+    <h1>Let's Make Our City Better.</h1>
+    <p>
+        Report civic issues in your area. Submit your complaint through
+        our citizen portal so it can be recorded and directed to the
+        appropriate department.
+    </p>
+</section>
+
+<main>
+
+    <section class="info-grid">
+        <div class="info-card">
+            <div class="emoji">📝</div>
+            <h3>Easy Registration</h3>
+            <p>Submit your complaint using a simple online form.</p>
+        </div>
+
+        <div class="info-card">
+            <div class="emoji">🏢</div>
+            <h3>Department Routing</h3>
+            <p>Select the department related to your civic issue.</p>
+        </div>
+
+        <div class="info-card">
+            <div class="emoji">🤝</div>
+            <h3>Citizen Participation</h3>
+            <p>Help improve public services by reporting local issues.</p>
+        </div>
+    </section>
+
+    <section class="form-card">
+        <div class="form-heading">
+            <h2>Submit a Complaint</h2>
+            <p>Enter your details and describe the issue clearly.</p>
+        </div>
+
+        <form action="{{ url_for('submit_complaint') }}"
+              method="POST"
+              id="complaintForm">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="flash-message">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <h3 class="section-title">
+                <span class="section-number">1</span>
+                Citizen Information
+            </h3>
+
+            <div class="fields">
+                <div class="field">
+                    <label for="full_name">
+                        Full Name <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Enter your full name"
+                        maxlength="100"
+                        autocomplete="name"
+                        required>
+                </div>
+
+                <div class="field">
+                    <label for="email">
+                        Email Address <span class="required">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        maxlength="100"
+                        autocomplete="email"
+                        required>
+                </div>
+
+                <div class="field full">
+                    <label for="phone">Mobile Number</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="Enter your mobile number"
+                        maxlength="15"
+                        autocomplete="tel">
+                    <span class="hint">Optional</span>
+                </div>
+            </div>
+
+            <h3 class="section-title">
+                <span class="section-number">2</span>
+                Complaint Details
+            </h3>
+
+            <div class="fields">
+                <div class="field full">
+                    <label for="category">
+                        Complaint Department <span class="required">*</span>
+                    </label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a department</option>
+                        <option value="Water Supply">Water Supply</option>
+                        <option value="Roads">Roads & Maintenance</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Sanitation">Sanitation & Garbage</option>
+                        <option value="Public Safety">Public Safety</option>
+                    </select>
+                    <span class="hint">
+                        Choose the department most relevant to your issue.
+                    </span>
+                </div>
+
+                <div class="field full">
+                    <label for="title">
+                        Complaint Title <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="e.g. Garbage not collected in my area"
+                        maxlength="150"
+                        required>
+                </div>
+
+                <div class="field full">
+                    <label for="description">Issue Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Describe the problem, location and any useful details..."
+                        maxlength="5000"></textarea>
+                    <span class="hint">
+                        Please provide enough details to help understand the issue.
+                    </span>
+                </div>
+            </div>
+
+            <div class="notice">
+                <strong>Before submitting:</strong>
+                Please check your contact details and make sure your
+                complaint information is accurate. Your complaint will
+                be stored in the system after successful submission.
+            </div>
+
+            <div class="submit-row">
+                <p class="privacy">
+                    🔒 Your submitted information is used for handling
+                    your complaint within this project system.
+                </p>
+
+                <button type="submit" id="submitButton">
+                    Submit Complaint &nbsp; →
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <strong>Smart Grievance Management System</strong>
+    <p>A Citizen-Centric Digital Governance Project</p>
+    <p>Designed to support better civic services and accountability.</p>
+</footer>
+
+<script>
+    const form = document.getElementById("complaintForm");
+    const submitButton = document.getElementById("submitButton");
+
+    form.addEventListener("submit", function () {
+        if (form.checkValidity()) {
+            submitButton.disabled = true;
+            submitButton.textContent = "Submitting...";
+        }
+    });
+</script>
+
+</body>
+</html>
