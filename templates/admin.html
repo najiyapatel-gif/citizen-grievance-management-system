@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | CivicCare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172033;
+        }
+
+        header {
+            background: #172554;
+            color: white;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            font-size: 23px;
+        }
+
+        header p {
+            margin-top: 6px;
+            color: #dbeafe;
+            font-size: 13px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            background: #2563eb;
+            padding: 11px 16px;
+            border-radius: 8px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .intro {
+            margin-bottom: 24px;
+        }
+
+        .intro h2 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .intro p {
+            color: #64748b;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card, .table-card {
+            background: white;
+            border-radius: 13px;
+            padding: 22px;
+            box-shadow: 0 4px 16px #1725540b;
+        }
+
+        .stat-card p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            margin-top: 12px;
+        }
+
+        .table-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .table-heading h2 {
+            font-size: 20px;
+        }
+
+        #search {
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            width: min(100%, 300px);
+            font-size: 14px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #fff7ed;
+            color: #c2410c;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status.resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.in-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 25px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                margin-top: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h1>CivicCare Admin</h1>
+            <p>Citizen Complaint Management System</p>
+        </div>
+
+        <a href="{{ url_for('home') }}">+ Submit Complaint</a>
+    </header>
+
+    <main>
+        <section class="intro">
+            <h2>Admin Dashboard</h2>
+            <p>Monitor citizen complaints and their current status.</p>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <p>Total Complaints</p>
+                <h3>{{ stats.total }}</h3>
+            </div>
+
+            <div class="stat-card">
+                <p>Pending Complaints</p>
+                <h3>{{ stats.pending }}</h3>
+            </div>
+
+            <div class="stat-card">
+                <p>Resolved Complaints</p>
+                <h3>{{ stats.resolved }}</h3>
+            </div>
+        </section>
+
+        <section class="table-card">
+            <div class="table-heading">
+                <h2>All Complaints</h2>
+                <input
+                    type="search"
+                    id="search"
+                    placeholder="Search complaints..."
+                    aria-label="Search complaints"
+                >
+            </div>
+
+            <div class="table-wrap">
+                <table id="complaintsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Citizen</th>
+                            <th>Email</th>
+                            <th>Title</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for complaint in complaints %}
+                        <tr>
+                            <td>#{{ complaint.complaint_id }}</td>
+                            <td>{{ complaint.full_name }}</td>
+                            <td>{{ complaint.email }}</td>
+                            <td>{{ complaint.title }}</td>
+                            <td>{{ complaint.department_name or 'Not assigned' }}</td>
+                            <td>
+                                {% set current_status = complaint.status or 'Pending' %}
+                                <span class="status
+                                    {% if current_status == 'Resolved' %}resolved
+                                    {% elif current_status == 'In Progress' %}in-progress
+                                    {% endif %}">
+                                    {{ current_status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if complaint.complaint_date %}
+                                    {{ complaint.complaint_date }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="empty">
+                                No complaints found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        CivicCare | Citizen Complaint &amp; Grievance Management System
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById("search");
+        const tableRows = document.querySelectorAll(
+            "#complaintsTable tbody tr"
+        );
+
+        searchInput.addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+
+            tableRows.forEach(function (row) {
+                row.style.display = row.innerText.toLowerCase().includes(query)
+                    ? ""
+                    : "none";
+            });
+        });
+    </script>
+</body>
+</html>
