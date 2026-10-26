@@ -3,138 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | Smart Grievance</title>
+    <title>Admin Login | CivicCare</title>
 
     <style>
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", Arial, sans-serif;
         }
 
         body {
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #102a43, #155eef);
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
         }
 
-        .login-card {
-            width: 100%;
-            max-width: 420px;
-            padding: 35px;
+        header {
+            background: #172b4d;
+            color: white;
+            padding: 20px 7%;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            margin: 65px auto;
+            padding: 32px;
             background: white;
-            border-radius: 18px;
-            box-shadow: 0 20px 60px #0002;
+            border-radius: 16px;
+            border: 1px solid #e5eaf2;
+            box-shadow: 0 8px 30px #0f172a0d;
         }
 
-        .icon {
-            width: 58px;
-            height: 58px;
-            display: grid;
-            place-items: center;
-            margin-bottom: 22px;
-            border-radius: 15px;
-            background: #eaf1ff;
-            font-size: 28px;
+        .tag {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
         }
 
         h1 {
-            color: #102a43;
-            font-size: 27px;
-            margin-bottom: 8px;
+            margin: 12px 0;
+            font-size: 29px;
         }
 
         .subtitle {
-            color: #62748a;
+            color: #64748b;
             font-size: 14px;
             line-height: 1.6;
             margin-bottom: 25px;
         }
 
+        .notice {
+            padding: 12px;
+            background: #eff6ff;
+            color: #1e40af;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
         label {
             display: block;
-            margin: 16px 0 7px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #334e68;
+            margin: 18px 0 7px;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         input {
             width: 100%;
-            padding: 13px;
-            border: 1px solid #cbd7e5;
-            border-radius: 9px;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             font-size: 14px;
+            outline: none;
         }
 
         input:focus {
-            outline: 2px solid #bfdbfe;
-            border-color: #155eef;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px #2563eb18;
         }
 
         button {
             width: 100%;
             margin-top: 24px;
-            padding: 14px;
+            padding: 13px;
             border: none;
-            border-radius: 9px;
-            background: #155eef;
+            border-radius: 8px;
+            background: #172b4d;
             color: white;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
         }
 
         button:hover {
-            background: #104bc4;
+            background: #263f68;
         }
 
         .message {
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            background: #eff6ff;
-            color: #174ea6;
-            font-size: 13px;
+            padding: 11px;
+            margin-bottom: 12px;
+            border-radius: 7px;
+            background: #e0f2fe;
+            color: #075985;
+            font-size: 14px;
         }
 
-        .back {
-            display: block;
-            margin-top: 22px;
+        .links {
             text-align: center;
-            color: #155eef;
-            text-decoration: none;
-            font-size: 13px;
+            margin-top: 22px;
+            font-size: 14px;
+            line-height: 2;
         }
 
-        .back:hover {
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
             text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 20px;
         }
     </style>
 </head>
 
 <body>
-    <main class="login-card">
-        <div class="icon">🔐</div>
+    <header>
+        <h2>CivicCare</h2>
+    </header>
+
+    <main class="container">
+        <div class="tag">ADMINISTRATOR PORTAL</div>
 
         <h1>Admin Login</h1>
+
         <p class="subtitle">
-            Sign in with your authorized administrator account
-            to manage citizen complaints.
+            Sign in to manage citizen complaints, update their status,
+            and monitor grievance resolution.
         </p>
 
+        <div class="notice">
+            <strong>Authorized access only.</strong>
+            This portal is intended for registered administrators.
+        </div>
+
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="message">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('admin_login') }}">
+        <form method="POST"
+              action="{{ url_for('admin_login') }}">
+
             <label for="email">Admin Email</label>
             <input
                 type="email"
@@ -142,7 +176,8 @@
                 name="email"
                 placeholder="Enter admin email"
                 autocomplete="username"
-                required>
+                required
+            >
 
             <label for="password">Password</label>
             <input
@@ -151,14 +186,21 @@
                 name="password"
                 placeholder="Enter admin password"
                 autocomplete="current-password"
-                required>
+                required
+            >
 
-            <button type="submit">Sign In →</button>
+            <button type="submit">Secure Login</button>
         </form>
 
-        <a class="back" href="{{ url_for('home') }}">
-            ← Back to Citizen Portal
-        </a>
+        <div class="links">
+            <a href="/">
+                ← Back to Portal Selection
+            </a>
+        </div>
     </main>
+
+    <footer>
+        © CivicCare | Citizen Complaint &amp; Grievance Management System
+    </footer>
 </body>
 </html>

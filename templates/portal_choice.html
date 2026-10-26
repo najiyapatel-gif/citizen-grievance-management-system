@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | CivicCare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        header {
+            padding: 22px 7%;
+            background: #172b4d;
+            color: white;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        header p {
+            margin: 7px 0 0;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 65px auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            color: #2563eb;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 12px;
+        }
+
+        h1 {
+            font-size: 38px;
+            margin: 14px 0;
+        }
+
+        .intro {
+            color: #64748b;
+            line-height: 1.7;
+            max-width: 620px;
+            margin: 0 auto 35px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+            text-align: left;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 30px #0f172a0d;
+            border: 1px solid #e5eaf2;
+        }
+
+        .icon {
+            font-size: 32px;
+        }
+
+        .card h2 {
+            margin: 18px 0 10px;
+        }
+
+        .card p {
+            color: #64748b;
+            line-height: 1.6;
+            min-height: 48px;
+        }
+
+        a.btn {
+            display: inline-block;
+            margin: 9px 8px 0 0;
+            padding: 12px 17px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: #e8efff;
+            color: #1d4ed8;
+        }
+
+        .flash {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            background: #e0f2fe;
+            color: #075985;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        @media (max-width: 650px) {
+            main {
+                margin: 30px auto;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>CivicCare</h2>
+        <p>Citizen Complaint &amp; Grievance Management System</p>
+    </header>
+
+    <main>
+        <div class="eyebrow">YOUR VOICE MATTERS</div>
+
+        <h1>How would you like to continue?</h1>
+
+        <p class="intro">
+            Report civic issues, follow complaint progress, and help make
+            your community better. Choose the portal that matches your role.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="cards">
+            <section class="card">
+                <div class="icon">🏙️</div>
+                <h2>Citizen Portal</h2>
+
+                <p>
+                    Register an account, submit civic complaints, and view
+                    the status of your complaints.
+                </p>
+
+                <a class="btn primary"
+                   href="{{ url_for('citizen_login') }}">
+                    Citizen Login
+                </a>
+
+                <a class="btn secondary"
+                   href="{{ url_for('citizen_signup') }}">
+                    Create Account
+                </a>
+            </section>
+
+            <section class="card">
+                <div class="icon">🛡️</div>
+                <h2>Admin Portal</h2>
+
+                <p>
+                    Authorized administrators can review complaints,
+                    manage their status, and monitor progress.
+                </p>
+
+                <a class="btn primary"
+                   href="{{ url_for('admin_login') }}">
+                    Admin Login
+                </a>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        © CivicCare | Citizen Complaint &amp; Grievance Management System
+    </footer>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | CivicCare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        header {
+            background: #172b4d;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .logout {
+            background: white;
+            color: #172b4d;
+            padding: 10px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #64748b;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5eaf2;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 5px 20px #0f172a08;
+        }
+
+        .stat-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .stat-card h2 {
+            margin: 12px 0 0;
+            font-size: 30px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5eaf2;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px #0f172a08;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar input,
+        .toolbar select {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .toolbar input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: top;
+            padding: 13px 10px;
+            border-bottom: 1px solid #e5eaf2;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+            white-space: nowrap;
+        }
+
+        td {
+            line-height: 1.5;
+        }
+
+        .status-form {
+            min-width: 180px;
+        }
+
+        .status-form select,
+        .status-form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 7px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .status-form button {
+            width: 100%;
+            padding: 9px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .status-form button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            margin-bottom: 18px;
+            padding: 12px;
+            background: #e0f2fe;
+            color: #075985;
+            border-radius: 8px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 500px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            header h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h2>CivicCare</h2>
+            <p>Administration Dashboard</p>
+        </div>
+
+        <a class="logout"
+           href="{{ url_for('admin_logout') }}">
+            Logout
+        </a>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <h1>Admin Dashboard</h1>
+            <p>
+                Monitor citizen complaints, review submitted issues,
+                and update complaint progress.
+            </p>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- Dashboard statistics -->
+        <section class="stats">
+            <div class="stat-card">
+                <p>Total Complaints</p>
+                <h2>{{ total }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Pending</p>
+                <h2>{{ pending }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>In Progress</p>
+                <h2>{{ in_progress }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Resolved</p>
+                <h2>{{ resolved }}</h2>
+            </div>
+        </section>
+
+        <!-- Complaint management -->
+        <section class="panel">
+            <h2>Manage Complaints</h2>
+
+            <div class="toolbar">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search by complaint, citizen, email..."
+                    aria-label="Search complaints"
+                >
+
+                <select id="statusFilter"
+                        aria-label="Filter by status">
+                    <option value="">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="in progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+            </div>
+
+            {% if complaints %}
+                <div class="table-wrap">
+                    <table id="complaintsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Citizen</th>
+                                <th>Email / Phone</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Update Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for complaint in complaints %}
+                                <tr class="complaint-row">
+                                    <td>
+                                        {{ complaint.complaint_id }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.full_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.email }}<br>
+                                        {{ complaint.phone }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.title }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.description }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.department_name or 'Not assigned' }}
+                                    </td>
+
+                                    <td>
+                                        {{ complaint.complaint_date }}
+                                    </td>
+
+                                    <td class="current-status">
+                                        {{ complaint.status }}
+                                    </td>
+
+                                    <td>
+                                        <form
+                                            class="status-form"
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'update_complaint_status',
+                                                complaint_id=complaint.complaint_id
+                                            ) }}"
+                                        >
+                                            <select
+                                                name="status"
+                                                aria-label="New complaint status"
+                                                required
+                                            >
+                                                <option
+                                                    value="Pending"
+                                                    {% if complaint.status == 'Pending' %}selected{% endif %}
+                                                >
+                                                    Pending
+                                                </option>
+
+                                                <option
+                                                    value="In Progress"
+                                                    {% if complaint.status == 'In Progress' %}selected{% endif %}
+                                                >
+                                                    In Progress
+                                                </option>
+
+                                                <option
+                                                    value="Resolved"
+                                                    {% if complaint.status == 'Resolved' %}selected{% endif %}
+                                                >
+                                                    Resolved
+                                                </option>
+                                            </select>
+
+                                            <input
+                                                type="text"
+                                                name="remarks"
+                                                placeholder="Remarks (optional)"
+                                                maxlength="500"
+                                            >
+
+                                            <button type="submit">
+                                                Save Status
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="empty" id="noResults" hidden>
+                    No complaints match your search.
+                </p>
+            {% else %}
+                <div class="empty">
+                    No complaints have been submitted yet.
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        © CivicCare | Citizen Complaint &amp; Grievance Management System
+    </footer>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const statusFilter = document.getElementById("statusFilter");
+        const rows = document.querySelectorAll(".complaint-row");
+        const noResults = document.getElementById("noResults");
+
+        function filterComplaints() {
+            const searchText = searchInput.value.toLowerCase().trim();
+            const selectedStatus = statusFilter.value.toLowerCase();
+            let visibleCount = 0;
+
+            rows.forEach(function (row) {
+                const rowText = row.innerText.toLowerCase();
+                const currentStatus = row
+                    .querySelector(".current-status")
+                    .innerText.toLowerCase()
+                    .trim();
+
+                const matchesSearch = rowText.includes(searchText);
+                const matchesStatus =
+                    !selectedStatus || currentStatus === selectedStatus;
+
+                const visible = matchesSearch && matchesStatus;
+
+                row.style.display = visible ? "" : "none";
+
+                if (visible) {
+                    visibleCount++;
+                }
+            });
+
+            if (noResults) {
+                noResults.hidden = visibleCount !== 0;
+            }
+        }
+
+        searchInput.addEventListener("input", filterComplaints);
+        statusFilter.addEventListener("change", filterComplaints);
+    </script>
+</body>
+</html>

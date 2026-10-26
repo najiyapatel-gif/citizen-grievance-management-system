@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard | CivicCare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        header {
+            background: #172b4d;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .logout {
+            padding: 10px 15px;
+            border-radius: 7px;
+            background: #fff;
+            color: #172b4d;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        main {
+            max-width: 1150px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #64748b;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 350px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            border-radius: 13px;
+            border: 1px solid #e5eaf2;
+            box-shadow: 0 5px 20px #0f172a08;
+            margin-bottom: 22px;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .hint {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background: white;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            margin-bottom: 18px;
+            padding: 12px;
+            background: #e0f2fe;
+            color: #075985;
+            border-radius: 8px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #e5eaf2;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 20px;
+            background: #e2e8f0;
+            color: #334155;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status.resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.in-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 28px 10px;
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 25px;
+        }
+
+        @media (max-width: 850px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 18px 5%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .panel {
+                padding: 18px;
+            }
+
+            header h2 {
+                font-size: 19px;
+            }
+
+            .welcome h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <h2>CivicCare</h2>
+            <p>Citizen Dashboard</p>
+        </div>
+
+        <a class="logout"
+           href="{{ url_for('citizen_logout') }}">
+            Logout
+        </a>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <h1>
+                Welcome, {{ citizen.full_name }}!
+            </h1>
+
+            <p>
+                Submit a civic complaint and track its progress
+                from your dashboard.
+            </p>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="layout">
+
+            <!-- Complaint submission form -->
+            <section class="panel">
+                <h2>Submit a Complaint</h2>
+
+                <p class="hint">
+                    Describe the civic issue clearly so the concerned
+                    department can review it.
+                </p>
+
+                <form method="POST"
+                      action="{{ url_for('submit') }}">
+
+                    <label for="title">Complaint Title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Example: Water leakage"
+                        maxlength="150"
+                        required
+                    >
+
+                    <label for="category">Department / Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Water Supply">Water Supply</option>
+                        <option value="Roads">Roads</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Sanitation">Sanitation</option>
+                        <option value="Public Safety">Public Safety</option>
+                    </select>
+
+                    <label for="description">Complaint Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        placeholder="Explain the problem and its location..."
+                        required
+                    ></textarea>
+
+                    <button type="submit">
+                        Submit Complaint
+                    </button>
+                </form>
+            </section>
+
+            <!-- Citizen complaint history -->
+            <section class="panel">
+                <h2>My Complaints</h2>
+
+                <p class="hint">
+                    View your submitted complaints and their latest status.
+                </p>
+
+                {% if complaints %}
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Department</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for complaint in complaints %}
+                                    <tr>
+                                        <td>
+                                            {{ complaint.complaint_id }}
+                                        </td>
+
+                                        <td>
+                                            {{ complaint.title }}
+                                        </td>
+
+                                        <td>
+                                            {{ complaint.department_name or 'Not assigned' }}
+                                        </td>
+
+                                        <td>
+                                            {{ complaint.complaint_date }}
+                                        </td>
+
+                                        <td>
+                                            {% set current_status = complaint.status|lower|replace(' ', '-') %}
+
+                                            <span class="status {{ current_status }}">
+                                                {{ complaint.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty">
+                        <p>You haven't submitted any complaints yet.</p>
+                        <p>Use the form to submit your first complaint.</p>
+                    </div>
+                {% endif %}
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        © CivicCare | Citizen Complaint &amp; Grievance Management System
+    </footer>
+</body>
+</html>
