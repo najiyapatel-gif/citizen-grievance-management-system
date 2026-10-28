@@ -166,7 +166,7 @@ def citizen_login():
     return render_template("citizen_login.html")
 
 
-@app.route("/citizen/logout", methods=["POST"])
+@app.route("/citizen/logout", methods=["GET","POST"])
 @login_required("citizen")
 def citizen_logout():
     session.clear()
@@ -200,7 +200,8 @@ def citizen_dashboard():
 
         return render_template(
             "citizen_dashboard.html",
-            complaints=complaints
+            complaints=complaints,
+            citizen={"full_name":session.get("citizen_name","citizen")}
         )
 
     except Exception:
